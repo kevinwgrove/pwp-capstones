@@ -59,6 +59,11 @@ class TomeRater():
                 most_positive_user += user
         return most_positive_user
 
+    def existing_user(self):
+        for user in self.users:
+            if user == self.users.keys():
+                return print("This user already exists")
+
 
 class User():
     def __init__(self, name, email):
@@ -69,8 +74,15 @@ class User():
     def get_email(self):
         return self.get_email()
 
-    def change_email(self, address):
-        pass
+    def change_email(self, new_email):
+        self.new_email = new_email
+        return print(self.name + "'s email has been updated.")
+
+    def invalid_email(self, email):
+        self.email = email
+        for l in email:
+            if ["@", ".com", ".edu", ".org"] not in email:
+                return "This is an invalid email address"
 
     def __repr__(self):
         return "Username:  " + self.name + ", email:  " + self.email + ", books read:  " + str(len(self.books))
@@ -106,6 +118,11 @@ class Book():
     def set_isbn(self, isbn):
         self.isbn = isbn
         return print(book.title + " ISBN number has been updated to " + str(book.isbn))
+
+    def unique_isbn(self):
+        if isbn in self.isbn:
+            return print("That ISBN number is already set")
+            
 
     def add_rating(self, rating):
         if rating >= 0 and rating <= 4:
@@ -155,30 +172,3 @@ class Non_Fiction(Book):
 
     def __repr__(self):
         return self.title + ", a " + self.level + " manual on " + self.subject
-
-    
-
-kgrove = User("kgrove", "kwg@gmail.com")
-book = Book("The Jackal", 69)
-book1 = Book("A", 9)
-kgrove.read_book(book, 3)
-kgrove.read_book(book1, 2)
-
-print(kgrove.get_average_rating())
-
-book.add_rating(3)
-book.add_rating(2)
-book.add_rating(3)
-
-print(book.get_average_rating())
-
-print(kgrove.books)
-
-# alice = Fiction("Alice in Wonderland", 0,"Lewis Carroll")
-# print(alice)
-
-
-
-#book.get_title()
-#print(book.title, book.isbn)
-
