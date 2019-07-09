@@ -25,10 +25,15 @@ class TomeRater():
                 self.books[book] += 1
 
     def add_user(self, name, email, user_books=None):
-        new_user = User(name, email)
-        if user_books != None:
-            for book in user_books:
-                add_book_to_user(book, email)
+        existing_user = email
+        try:
+            self.users[existing_user]
+            return "This user already exists."
+        except KeyError:
+            new_user = User(name, email)
+            if user_books != None:
+                for book in user_books:
+                    add_book_to_user(book, email)
 
     def print_catalog(self):
         for book in self.books.keys():
@@ -38,32 +43,43 @@ class TomeRater():
         for users in self.users.values():
             print(users)
 
+    def unique_isbn(self):
+        isbns = []
+        for book in self.books.keys():
+            isbn = book.isbn
+            if isbn not in isbns:
+                isbns.append(isbn)
+            else:
+                return print("That ISBN number is already assigned.")
+
     def most_read_book(self):
         most_read_book = {}
         for book, value in self.books.items():
-            if len(value) == max(self.books.values()):
-                most_read_book.update({book: len(value)}) 
-
+            if value == max(self.books.values()):
+                most_read_book.update({book: value}) 
 
     def highest_rated_book(self):
         highest_rated_book = []
-        for book, value in self.books.keys():
-            if value == max(book.get_average_rating()):
-                highest_rated_book += book
+        max_value = 0
+        for book in self.books.keys():
+            if max_value < book.get_average_rating():
+                max_value = book.get_average_rating()
+                highest_rated_book = [book]
+            elif max_value == book.get_average_rating():
+                highest_rated_book.append(book)
         return highest_rated_book            
 
     def most_positive_user(self):
-        most_positive_user = []
+        highest_rated_user = []
+        max_value = 0
         for user in self.users.values():
-            if user == max(user.get_average_rating()):
-                most_positive_user += user
-        return most_positive_user
-
-    def existing_user(self):
-        for user in self.users:
-            if user == self.users.keys():
-                return print("This user already exists")
-
+            if max_value < user.get_average_rating():
+                max_value = user.get_average_rating()
+                highest_rated_user = [user]
+            elif max_value == user.get_average_rating():
+                highest_rated_user.append(user)
+        return highest_rated_user
+    
 
 class User():
     def __init__(self, name, email):
@@ -78,11 +94,14 @@ class User():
         self.new_email = new_email
         return print(self.name + "'s email has been updated.")
 
-    def invalid_email(self, email):
-        self.email = email
-        for l in email:
-            if ["@", ".com", ".edu", ".org"] not in email:
-                return "This is an invalid email address"
+    def valid_email(self):
+        check_for = [".com", ".edu", ".org"]
+        if '@' not in self.email:
+            return False
+        for l in check_for:
+            if l in self.email:
+                return True
+        return False
 
     def __repr__(self):
         return "Username:  " + self.name + ", email:  " + self.email + ", books read:  " + str(len(self.books))
@@ -117,12 +136,7 @@ class Book():
 
     def set_isbn(self, isbn):
         self.isbn = isbn
-        return print(book.title + " ISBN number has been updated to " + str(book.isbn))
-
-    def unique_isbn(self):
-        if isbn in self.isbn:
-            return print("That ISBN number is already set")
-            
+        return print(book.title + " ISBN number has been updated to " + str(book.isbn))            
 
     def add_rating(self, rating):
         if rating >= 0 and rating <= 4:
